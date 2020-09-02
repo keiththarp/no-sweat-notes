@@ -1,26 +1,40 @@
 const fs = require('fs');
-const savedNotes = fs.readFile('./db/db.json', (err, data) => {
+const { v4: uuidv4 } = require('uuid');
+
+let savedNotes = [];
+fs.readFile('./db/db.json', (err, data) => {
   if (err) throw err;
-  JSON.parse(data);
+  savedNotes = JSON.parse(data);
 });
+
 
 module.exports = function (app) {
 
   app.get('/api/notes', (req, res) => {
-    res.json(savedNotes)
+    res.json(savedNotes);
   });
 
   app.post("/api/notes", (req, res) => {
-    savedNotes.push(req.body);
+    console.log(savedNotes);
+    const thisNote = req.body
+    thisNote.id = (uuidv4());
+    console.log(thisNote);
+    savedNotes.push(thisNote);
     fs.writeFile('./db/db.json', JSON.stringify(savedNotes), (err) => {
       if (err) throw err;
       res.json(savedNotes);
+      console.log(savedNotes);
+
     });
   });
 
+  app.delete(`/api/notes/:id`, (req, res) => {
+    noteToDelete = req.params.id;
+    console.log(`this is the delete obj! ${noteToDelete}`);
+    res.send(noteToDelete);
+  });
+
 };
-
-
 
 
 
