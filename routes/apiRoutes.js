@@ -2,46 +2,43 @@ const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 
 let savedNotes = [];
+
 fs.readFile('./db/db.json', (err, data) => {
   if (err) throw err;
   savedNotes = JSON.parse(data);
 });
 
+rewriteDB = () => {
+  fs.writeFile('./db/db.json', JSON.stringify(savedNotes), (err) => {
+    if (err) throw err;
+  });
+};
 
 module.exports = function (app) {
 
   app.get('/api/notes', (req, res) => {
-    res.json(savedNotes);
+    res.send(savedNotes);
   });
 
   app.post("/api/notes", (req, res) => {
-    console.log(savedNotes);
     const thisNote = req.body
     thisNote.id = (uuidv4());
-    console.log(thisNote);
     savedNotes.push(thisNote);
-    fs.writeFile('./db/db.json', JSON.stringify(savedNotes), (err) => {
-      if (err) throw err;
-      res.json(savedNotes);
-      console.log(savedNotes);
-
-    });
+    rewriteDB();
+    res.send(savedNotes);
   });
 
   app.delete(`/api/notes/:id`, (req, res) => {
     idToDelete = req.params.id;
-    console.log(savedNotes);
-    savedNotes.forEach(index => {
-      if (index.id === idToDelete) {
-        savedNotes.splice(index, 1);
-        console.log(savedNotes);
+    for (let i = 0; i < savedNotes.length; i++) {
+      if (savedNotes[i].id === idToDelete) {
+        savedNotes.splice(i, 1);
+        rewriteDB();
+        res.send(savedNotes);
         return;
       }
-    });
-    console.log(`this is the id to delete! ${idToDelete}`);
-    res.send(idToDelete);
+    }
   });
-
 };
 
 
