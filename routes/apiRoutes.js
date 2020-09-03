@@ -29,9 +29,17 @@ module.exports = function (app) {
   });
 
   app.delete(`/api/notes/:id`, (req, res) => {
-    noteToDelete = req.params.id;
-    console.log(`this is the delete obj! ${noteToDelete}`);
-    res.send(noteToDelete);
+    idToDelete = req.params.id;
+    console.log(savedNotes);
+    savedNotes.forEach(index => {
+      if (index.id === idToDelete) {
+        savedNotes.splice(index, 1);
+        console.log(savedNotes);
+        return;
+      }
+    });
+    console.log(`this is the id to delete! ${idToDelete}`);
+    res.send(idToDelete);
   });
 
 };
