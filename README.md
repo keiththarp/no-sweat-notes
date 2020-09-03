@@ -7,15 +7,11 @@
 ![No Sweat Notes screen shot](./public/assets/no-sweat-notes-screenshot.png)
 
 ## Table of Contents
-- [Installation](#Installation-instructions)
 - [Usage](#How-to-use)
 - [Contribute](#How-to-contribute)
 - [Questions](#Developed-by)
 - [Credits](#Acknowledgments-and-Credits)
 - [License](#Licensed-under-MIT)
-
-## Installation instructions
-The app can be downloaded from GitHub and saved in a convenient directory.
 
 ## How to use
 The app is very easy to use. [Visit this link](https://no-sweat-notes.herokuapp.com/ "View No Sweat Notes App") and start typing your first notes! When your note is complete, simple click the save icon in the top right corner. To view notes, click their title in the left hand list. When you're ready to delete a note, simpley click the trashcan icon near the title!
