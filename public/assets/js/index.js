@@ -37,8 +37,8 @@ const renderActiveNote = () => {
   $saveNoteBtn.hide();
 
   if (activeNote.id) {
-    $noteTitle.attr("readonly", true);
-    $noteText.attr("readonly", true);
+    $noteTitle.attr("readonly", false);
+    $noteText.attr("readonly", false);
     $noteTitle.val(activeNote.title);
     $noteText.val(activeNote.text);
   } else {
@@ -51,13 +51,23 @@ const renderActiveNote = () => {
 
 // Get the note data from the inputs, save it to the db and update the view
 const handleNoteSave = function () {
-  const newNote = {
-    title: $noteTitle.val(),
-    text: $noteText.val(),
-  };
+  let thisNote = {};
+  if (activeNote.id) {
+    thisNote = {
+      title: $noteTitle.val(),
+      text: $noteText.val(),
+      id: activeNote.id
+    };
+  } else {
+    thisNote = {
+      title: $noteTitle.val(),
+      text: $noteText.val(),
+    };
+  }
 
-  saveNote(newNote).then(() => {
+  saveNote(thisNote).then(() => {
     getAndRenderNotes();
+    handleNewNoteView();
     renderActiveNote();
   });
 };
