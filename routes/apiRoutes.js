@@ -3,10 +3,13 @@ const { v4: uuidv4 } = require('uuid');
 
 let savedNotes = [];
 
-fs.readFile('./db/db.json', (err, data) => {
-  if (err) throw err;
-  savedNotes = JSON.parse(data);
-});
+readDB = () => {
+  fs.readFile('./db/db.json', (err, data) => {
+    if (err) throw err;
+    savedNotes = JSON.parse(data);
+  });
+};
+readDB();
 
 rewriteDB = () => {
   fs.writeFile('./db/db.json', JSON.stringify(savedNotes), (err) => {
@@ -17,15 +20,34 @@ rewriteDB = () => {
 module.exports = function (app) {
 
   app.get('/api/notes', (req, res) => {
+    readDB();
     res.send(savedNotes);
   });
 
   app.post("/api/notes", (req, res) => {
     const thisNote = req.body
-    thisNote.id = (uuidv4());
-    savedNotes.push(thisNote);
-    rewriteDB();
-    res.send(savedNotes);
+    console.log(thisNote);
+    if (!thisNote.id) {
+      thisNote.id = (uuidv4());
+      savedNotes.push(thisNote);
+      rewriteDB();
+      readDB();
+      res.send(savedNotes);
+
+    } else {
+      const thisID = thisNote.id;
+
+      for (let i = 0; i < savedNotes.length; i++) {
+        if (savedNotes[i].id === thisNote.id) {
+          savedNotes[i] = thisNote;
+          rewriteDB();
+          readDB();
+          res.send(savedNotes);
+          return;
+        }
+      }
+
+    };
   });
 
   app.delete(`/api/notes/:id`, (req, res) => {
@@ -34,6 +56,7 @@ module.exports = function (app) {
       if (savedNotes[i].id === idToDelete) {
         savedNotes.splice(i, 1);
         rewriteDB();
+        readDB();
         res.send(savedNotes);
         return;
       }
